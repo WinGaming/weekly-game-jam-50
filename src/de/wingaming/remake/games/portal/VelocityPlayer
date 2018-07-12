@@ -1,0 +1,56 @@
+package de.wingaming.remake.games.portal;
+
+import de.wingaming.remake.games.CollideFallback;
+import de.wingaming.remake.games.World;
+import de.wingaming.remake.utils.Location;
+import de.wingaming.remake.utils.Vector2d;
+
+public class PortalPlayer implements CollideFallback {
+	
+	private Location position;
+	private Vector2d velocity = new Vector2d(0, 0);
+	private Vector2d maxVelocity = new Vector2d(10, 10);
+	
+	public PortalPlayer(Location position) {
+		this.position = position;
+	}
+	
+	public void addVelocity(double x, double y) {
+		double vx = Math.min(velocity.getX() + x, maxVelocity.getX());
+		double vy = Math.min(velocity.getY() + y, maxVelocity.getY());
+		
+		vx = Math.max(vx, -maxVelocity.getX());
+		vy = Math.max(vy, -maxVelocity.getY());
+		
+		this.velocity.setX(vx);
+		this.velocity.setY(vy);
+	}
+	
+	public void update(World world) {
+		this.position = world.collide(position, velocity.getX(), velocity.getY(), 20, 20, this);
+	}
+	
+	public void clearXVel() {
+		velocity.setX(0);
+	}
+	
+	public void clearYVel() {
+		velocity.setY(0);
+	}
+	
+	public Location getPosition() {
+		return position;
+	}
+	
+	public void setPosition(Location position) {
+		this.position = position;
+	}
+
+	public void collideY(boolean top) {
+		clearYVel();
+	}
+
+	public void collideX() {
+		clearXVel();
+	}
+}
